@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
+const path = require('path')
 
 const requestLogger = (request, response, next) => {
   console.log('Method:', request.method)
@@ -49,7 +50,6 @@ let notes = [
     }
   ]
 
-
 app.get('/api/notes', (request, response) => {
   response.json(notes)
 })
@@ -92,6 +92,11 @@ app.post('/api/notes', (request, response) => {
 
   notes = notes.concat(newNote)
   response.status(201).json(newNote)
+})
+
+// Catch-all route to serve frontend for any non-API routes
+app.get(/^\/(?!api).*/, (request, response) => {
+  response.sendFile(path.join(__dirname, 'dist', 'index.html'))
 })
 
 const unknownEndpoint = (request, response) => {
